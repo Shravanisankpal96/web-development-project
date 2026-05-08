@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Expense Tracker</title>
+
+    <style>
+
+        *{
+            margin:0;
+            padding:0;
+            box-sizing:border-box;
+            font-family:Arial, sans-serif;
+        }
+
+        body{
+            background:linear-gradient(135deg,#74ebd5,#ACB6E5);
+            height:100vh;
+            display:flex;
+            justify-content:center;
+            align-items:center;
+        }
+
+        .container{
+            width:450px;
+            background:white;
+            padding:25px;
+            border-radius:15px;
+            box-shadow:0 5px 20px rgba(0,0,0,0.3);
+        }
+
+        h1{
+            text-align:center;
+            margin-bottom:20px;
+            color:#333;
+        }
+
+        .balance-box{
+            background:#007bff;
+            color:white;
+            padding:20px;
+            border-radius:10px;
+            text-align:center;
+            margin-bottom:20px;
+        }
+
+        .balance-box h2{
+            margin-top:10px;
+            font-size:32px;
+        }
+
+        .summary{
+            display:flex;
+            justify-content:space-between;
+            margin-bottom:20px;
+        }
+
+        .income, .expense{
+            width:48%;
+            padding:15px;
+            border-radius:10px;
+            text-align:center;
+            color:white;
+        }
+
+        .income{
+            background:#28a745;
+        }
+
+        .expense{
+            background:#dc3545;
+        }
+
+        input, select{
+            width:100%;
+            padding:12px;
+            margin:10px 0;
+            border:1px solid #ccc;
+            border-radius:8px;
+            font-size:16px;
+        }
+
+        button{
+            width:100%;
+            padding:12px;
+            background:#007bff;
+            color:white;
+            border:none;
+            border-radius:8px;
+            font-size:18px;
+            cursor:pointer;
+            transition:0.3s;
+        }
+
+        button:hover{
+            background:#0056b3;
+        }
+
+        .history{
+            margin-top:20px;
+        }
+
+        .history h3{
+            margin-bottom:10px;
+            color:#333;
+        }
+
+        .transaction{
+            display:flex;
+            justify-content:space-between;
+            align-items:center;
+            background:#f4f4f4;
+            padding:10px;
+            margin:8px 0;
+            border-radius:8px;
+        }
+
+        .plus{
+            color:green;
+            font-weight:bold;
+        }
+
+        .minus{
+            color:red;
+            font-weight:bold;
+        }
+
+        .delete-btn{
+            background:red;
+            color:white;
+            border:none;
+            padding:5px 10px;
+            border-radius:5px;
+            cursor:pointer;
+        }
+
+    </style>
+</head>
+
+<body>
+
+    <div class="container">
+
+        <h1>Expense Tracker 💰</h1>
+
+        <div class="balance-box">
+            <p>Total Balance</p>
+            <h2 id="balance">₹0</h2>
+        </div>
+
+        <div class="summary">
+
+            <div class="income">
+                <h3>Income</h3>
+                <p id="income">₹0</p>
+            </div>
+
+            <div class="expense">
+                <h3>Expense</h3>
+                <p id="expense">₹0</p>
+            </div>
+
+        </div>
+
+        <input type="text" id="text" placeholder="Enter description">
+
+        <input type="number" id="amount" placeholder="Enter amount">
+
+        <select id="type">
+            <option value="income">Income</option>
+            <option value="expense">Expense</option>
+        </select>
+
+        <button onclick="addTransaction()">Add Transaction</button>
+
+        <div class="history">
+            <h3>Transaction History</h3>
+
+            <div id="transactionList"></div>
+        </div>
+
+    </div>
+
+    <script>
+
+        let balance = 0;
+        let income = 0;
+        let expense = 0;
+
+        function addTransaction(){
+
+            let text = document.getElementById("text").value;
+            let amount = parseFloat(document.getElementById("amount").value);
+            let type = document.getElementById("type").value;
+
+            if(text == "" || isNaN(amount)){
+
+                alert("Please fill all fields");
+                return;
+            }
+
+            const transactionList = document.getElementById("transactionList");
+
+            const transaction = document.createElement("div");
+            transaction.classList.add("transaction");
+
+            if(type == "income"){
+
+                balance += amount;
+                income += amount;
+
+                transaction.innerHTML = `
+                    <span>${text}</span>
+                    <span class="plus">+ ₹${amount}</span>
+                    <button class="delete-btn" onclick="deleteTransaction(this, ${amount}, 'income')">X</button>
+                `;
+            }
+            else{
+
+                balance -= amount;
+                expense += amount;
+
+                transaction.innerHTML = `
+                    <span>${text}</span>
+                    <span class="minus">- ₹${amount}</span>
+                    <button class="delete-btn" onclick="deleteTransaction(this, ${amount}, 'expense')">X</button>
+                `;
+            }
+
+            transactionList.appendChild(transaction);
+
+            updateUI();
+
+            document.getElementById("text").value = "";
+            document.getElementById("amount").value = "";
+        }
+
+        function updateUI(){
+
+            document.getElementById("balance").innerText = "₹" + balance;
+
+            document.getElementById("income").innerText = "₹" + income;
+
+            document.getElementById("expense").innerText = "₹" + expense;
+        }
+
+        function deleteTransaction(button, amount, type){
+
+            if(type == "income"){
+
+                balance -= amount;
+                income -= amount;
+            }
+            else{
+
+                balance += amount;
+                expense -= amount;
+            }
+
+            button.parentElement.remove();
+
+            updateUI();
+        }
+
+    </script>
+
+</body>
+</html>
